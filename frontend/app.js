@@ -1,10 +1,20 @@
-// On button click we have to collect the date
+const form = document.getElementById("event-form");
+const outputData = document.getElementById("output-data");
 
-const RegisterButton = document.querySelector("form");
+form.addEventListener("submit", function (e) {
+  e.preventDefault();
 
-RegisterButton.addEventListener("submit", function (output) {
-  output.preventDefault();
-  let fetchedEventID = output.target[0].value;
-  let fetchedEventName = output.target[1].value;
-  let fetchedEventDate = output.target[2].value;
+  const eventID = e.target.event_id.value;
+  const eventName = e.target.event_name.value;
+  const eventDate = e.target.event_date.value;
+
+  // Display the fetched data in the output section
+  outputData.innerHTML = `
+        <p>Event ID: <strong>${eventID}</strong></p>
+        <p>Event Name: <strong>${eventName}</strong></p>
+        <p>Event Date: <strong>${eventDate}</strong></p>
+    `;
+
+  // Clear the form inputs
+  form.reset();
 });
