@@ -3,58 +3,40 @@ import json
 
 # Initialize DynamoDB resource outside the handler
 dynamodb = boto3.resource("dynamodb")
-event_table = dynamodb.Table("event_management")  # Hardcoded table name
+event_table = dynamodb.Table("event_management")
 
 def lambda_handler(event, context):
     try:
-        # Parse and validate the incoming event JSON
-        receivedEventID = event.get("eid")
-        receivedEventName = event.get("ename")
-        receivedEventDate = event.get("edate")
-        
-        # Validate required fields
-        if receivedEventID is None or receivedEventName is None or receivedEventDate is None:
-            return {
-                "statusCode": 400,
-                "headers": {
-                    "Access-Control-Allow-Origin": "*",  # Allow CORS
-                },
-                "body": json.dumps({"message": "Missing required event details"})
-            }
-        
-        # Ensure event_id is an integer
-        try:
-            receivedEventID = int(receivedEventID)
-        except ValueError:
-            return {
-                "statusCode": 400,
-                "headers": {
-                    "Access-Control-Allow-Origin": "*",  # Allow CORS
-                },
-                "body": json.dumps({"message": "event_id must be an integer"})
-            }
-        
+        # Print the entire event to CloudWatch logs for debugging
+        print("Received event:", json.dumps(event))
+
+        # Parse the body (which is a string) into JSON
+        event_data = json.loads(event["body"])
+
+        # Extract values from the parsed body
+        receivedEventID = event_data.get("eid")
+        receivedEventName = event_data.get("ename")
+        receivedEventDate = event_data.get("edate")
+
         # Add the item to the DynamoDB table
         event_table.put_item(
             Item={
-                "event_id": receivedEventID,  # Store as integer
+                "event_id": int(receivedEventID),  # Convert to integer
                 "event_name": receivedEventName,
                 "event_date": receivedEventDate
             }
         )
-        
+
+        # Return success response
         return {
             "statusCode": 200,
-            "headers": {
-                "Access-Control-Allow-Origin": "*",  # Allow CORS
-            },
             "body": json.dumps({"message": "Event added successfully"})
         }
+
     except Exception as e:
+        # Log the error and return error response
+        print(f"Error occurred: {str(e)}")
         return {
             "statusCode": 500,
-            "headers": {
-                "Access-Control-Allow-Origin": "*",  # Allow CORS
-            },
             "body": json.dumps({"message": "Failed to add event", "error": str(e)})
         }
