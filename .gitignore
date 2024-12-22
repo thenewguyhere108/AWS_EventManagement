@@ -38,3 +38,4 @@ terraform.rc
 
 #Ignore Terraform lockkfiles
 .terraform.lock.hcl
+./lambda/lambda_*.zip
