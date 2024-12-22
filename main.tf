@@ -20,3 +20,9 @@ resource "aws_lambda_function" "lambda" {
 
 }
 
+resource "aws_lambda_permission" "allow_api_gateway" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  principal     = "apigateway.amazonaws.com"
+  function_name = aws_lambda_function.lambda.function_name
+}
