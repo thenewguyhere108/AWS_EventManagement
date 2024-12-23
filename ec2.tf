@@ -2,7 +2,6 @@ resource "aws_instance" "web_server" {
   ami                         = "ami-0e2c8caa4b6378d8c" # Specify the right AMI ID
   instance_type               = "t2.micro"
   associate_public_ip_address = true
-  key_name                    = "mykeypair"
   vpc_security_group_ids      = [aws_security_group.http.id]
   tags = {
     Name = "Event Mangement Server"
@@ -210,12 +209,6 @@ resource "aws_security_group" "http" {
   ingress {
     from_port   = 80
     to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  ingress {
-    from_port   = 22
-    to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
